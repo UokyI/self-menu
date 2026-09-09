@@ -2,7 +2,7 @@
 
 从 VS Code 右键子菜单直接运行自定义 Shell 命令。
 
-图像徽章:[![Version](https://img.shields.io/badge/version-0.0.1-blue)](https://github.com/UokyI/self-menu)
+图像徽章:[![Version](https://img.shields.io/badge/version-0.0.1-blue)](https://github.com/UokyI/self-sub-menu)
 
 [English](README.md) | **简体中文**
 
