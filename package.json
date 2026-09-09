@@ -2,7 +2,7 @@
   "name": "self-menu",
   "displayName": "Self Menu",
   "description": "Run custom shell commands from a configurable right-click submenu",
-  "version": "0.0.6",
+  "version": "0.0.1",
   "publisher": "self-menu",
   "engines": {
     "vscode": "^1.74.0"
@@ -19,7 +19,7 @@
     "commands": [
       {
         "command": "self-menu.configure",
-        "title": "Self Menu: 配置菜单项",
+        "title": "Self Menu: Configure Items",
         "category": "Self Menu"
       },
       {
@@ -29,21 +29,26 @@
       },
       {
         "command": "self-menu.run.0",
-        "title": "111",
+        "title": "wwwww",
         "category": "Self Menu"
       },
       {
         "command": "self-menu.run.1",
-        "title": "获取当前环境变量",
+        "title": "111",
         "category": "Self Menu"
       },
       {
         "command": "self-menu.run.2",
-        "title": "时间",
+        "title": "获取当前环境变量",
         "category": "Self Menu"
       },
       {
         "command": "self-menu.run.3",
+        "title": "时间",
+        "category": "Self Menu"
+      },
+      {
+        "command": "self-menu.run.4",
         "title": "测试",
         "category": "Self Menu"
       }
@@ -76,6 +81,10 @@
         },
         {
           "command": "self-menu.run.3",
+          "group": "self-menu"
+        },
+        {
+          "command": "self-menu.run.4",
           "group": "self-menu"
         },
         {
