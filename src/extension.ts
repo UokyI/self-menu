@@ -99,7 +99,7 @@ interface ManifestMenuEntry {
 
 function buildContributes(items: MenuItem[]): any {
   const commands: ManifestCommand[] = [
-    { command: CONFIGURE_CMD, title: 'Self Menu: 配置菜单项', category: 'Self Menu' },
+    { command: CONFIGURE_CMD, title: 'Self Menu: Configure Items', category: 'Self Menu' },
     { command: 'self-menu.execute', title: 'Self Menu (QuickPick)', category: 'Self Menu' }
   ];
 
@@ -149,10 +149,10 @@ function syncManifestIfNeeded(context: vscode.ExtensionContext, items: MenuItem[
     if (currentRunCount(manifest) !== items.length) {
       syncManifest(context, items);
       vscode.window.showInformationMessage(
-        'Self Menu 菜单项已变更。请重载窗口以更新右键子菜单。',
-        '立即重载'
+        'Self Menu: menu items changed. Reload the window to update the context submenu.',
+        'Reload Window'
       ).then(sel => {
-        if (sel === '立即重载') {
+        if (sel === 'Reload Window') {
           vscode.commands.executeCommand('workbench.action.reloadWindow');
         }
       });
@@ -167,7 +167,7 @@ class ConfigPanel {
   private readonly panel: vscode.WebviewPanel;
   private readonly context: vscode.ExtensionContext;
   private disposables: vscode.Disposable[] = [];
-  private readonly varHelp = '命令和 cwd 中支持变量：${workspaceFolder} ${file} ${dir} ${name} ${basename} ${extname} ${path}，分别代表工作区根目录、右键文件路径、所在目录、文件名(含扩展名)、文件名(不含扩展名)、扩展名、完整路径。';
+  private readonly varHelp = 'Placeholder variables for command and cwd: ${workspaceFolder} ${file} ${dir} ${name} ${basename} ${extname} ${path} — workspace root, right-clicked resource path, its directory, file/folder name (with extension), file name (without extension), extension, full path.';
 
   public static create(context: vscode.ExtensionContext): void {
     if (ConfigPanel.currentPanel) {
@@ -177,7 +177,7 @@ class ConfigPanel {
 
     const panel = vscode.window.createWebviewPanel(
       'self-menu-config',
-      'Self Menu 配置',
+      'Self Menu Settings',
       vscode.ViewColumn.One,
       {
         enableScripts: true,
@@ -215,15 +215,15 @@ class ConfigPanel {
         try {
           syncManifest(this.context, items);
         } catch (err: any) {
-          vscode.window.showErrorMessage('写回 package.json 失败: ' + err.message);
+          vscode.window.showErrorMessage('Failed to write back package.json: ' + err.message);
           break;
         }
         this.dispose();
         vscode.window.showInformationMessage(
-          'Self Menu 配置已保存。重载窗口后，右键菜单将显示子菜单。',
-          '立即重载'
+          'Self Menu: settings saved. Reload the window to update the context submenu.',
+          'Reload Window'
         ).then(sel => {
-          if (sel === '立即重载') {
+if (sel === 'Reload Window') {
             vscode.commands.executeCommand('workbench.action.reloadWindow');
           }
         });
@@ -235,7 +235,7 @@ class ConfigPanel {
         break;
       }
       case 'error': {
-        vscode.window.showErrorMessage(message.message || '操作失败');
+        vscode.window.showErrorMessage(message.message || 'Operation failed');
         break;
       }
     }
@@ -266,17 +266,17 @@ class ConfigPanel {
 </style>
 </head>
 <body>
-<h1>Self Menu 菜单项配置</h1>
-<div class="hint">保存后会自动写入扩展清单并更新右键子菜单。每个菜单项点击后会打开终端执行对应的命令。</div>
+<h1>Self Menu Items</h1>
+<div class="hint">Saved items are written into the extension manifest and shown in the right-click submenu. Each item opens a terminal and runs the configured command.</div>
 <div class="hint">${this.varHelp}</div>
 <div class="toolbar">
-  <button class="btn btn-primary" id="addBtn">+ 添加菜单项</button>
-  <button class="btn btn-ghost" id="saveBtn" style="margin-left:8px">保存</button>
-  <button class="btn btn-ghost" id="reloadBtn" style="margin-left:8px">重载窗口（使配置生效）</button>
+  <button class="btn btn-primary" id="addBtn">+ Add Item</button>
+  <button class="btn btn-ghost" id="saveBtn" style="margin-left:8px">Save</button>
+  <button class="btn btn-ghost" id="reloadBtn" style="margin-left:8px">Reload Window (Apply Changes)</button>
 </div>
-<div class="hint">提示：新增/修改/删除菜单项并点"保存"后，需点"重载窗口"让右键子菜单更新。</div>
+<div class="hint">Tip: after adding/modifying/deleting items, click "Save", then "Reload Window" to update the context submenu.</div>
 <div id="list"></div>
-<div id="empty" class="empty" style="display:none">暂无菜单项，点击上方"添加菜单项"开始配置。</div>
+<div id="empty" class="empty" style="display:none">No items yet. Click "Add Item" to start.</div>
 <script>
   const vscode = acquireVsCodeApi();
   let items = [];
@@ -291,13 +291,13 @@ class ConfigPanel {
       div.className = 'item';
       div.innerHTML =
         '<div class="item-header">' +
-          '<span class="item-title" data-idx="' + idx + '">' + esc(it.label || '未命名') + '</span>' +
-          '<button class="btn btn-danger" data-del="' + idx + '">删除</button>' +
+          '<span class="item-title" data-idx="' + idx + '">' + esc(it.label || 'Unnamed') + '</span>' +
+          '<button class="btn btn-danger" data-del="' + idx + '">Delete</button>' +
         '</div>' +
-        '<div class="field"><label>菜单名称 (label)</label><input type="text" data-field="label" data-idx="' + idx + '" value="' + esc(it.label) + '"></div>' +
-        '<div class="field"><label>Shell 命令 (command)</label><input type="text" data-field="command" data-idx="' + idx + '" value="' + esc(it.command) + '"><div class="placeholder">例: npm run build</div></div>' +
-        '<div class="field"><label>命令描述 (可选)</label><input type="text" data-field="description" data-idx="' + idx + '" value="' + esc(it.description || '') + '"></div>' +
-        '<div class="field"><label>工作目录 (可选 cwd)</label><input type="text" data-field="cwd" data-idx="' + idx + '" value="' + esc(it.cwd || '') + '"><div class="placeholder">留空则用工作区根目录</div></div>';
+        '<div class="field"><label>Menu Name (label)</label><input type="text" data-field="label" data-idx="' + idx + '" value="' + esc(it.label) + '"></div>' +
+        '<div class="field"><label>Shell Command (command)</label><input type="text" data-field="command" data-idx="' + idx + '" value="' + esc(it.command) + '"><div class="placeholder">e.g. npm run build</div></div>' +
+        '<div class="field"><label>Description (optional)</label><input type="text" data-field="description" data-idx="' + idx + '" value="' + esc(it.description || '') + '"></div>' +
+        '<div class="field"><label>Working Directory (optional cwd)</label><input type="text" data-field="cwd" data-idx="' + idx + '" value="' + esc(it.cwd || '') + '"><div class="placeholder">Leave empty to use the workspace root</div></div>';
       list.appendChild(div);
     });
   }
@@ -305,7 +305,7 @@ class ConfigPanel {
   function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
   document.getElementById('addBtn').addEventListener('click', () => {
-    items.unshift({ label: '新菜单项', command: '', description: '', cwd: '' });
+    items.unshift({ label: 'New Item', command: '', description: '', cwd: '' });
     render();
     const first = document.querySelector('.item input[data-field="label"]');
     if (first) { first.focus(); first.select(); }
@@ -327,7 +327,7 @@ class ConfigPanel {
       items[el.dataset.idx][el.dataset.field] = el.value;
       if (el.dataset.field === 'label') {
         const title = list.querySelector('.item-title[data-idx="'+el.dataset.idx+'"]');
-        if (title) title.textContent = el.value || '未命名';
+        if (title) title.textContent = el.value || 'Unnamed';
       }
     }
   });
@@ -378,10 +378,10 @@ export function activate(context: vscode.ExtensionContext) {
     const itemsArr = getItems();
     if (itemsArr.length === 0) {
       vscode.window.showWarningMessage(
-        'Self Menu: 尚未配置任何菜单项。',
-        '打开配置页面'
+        'Self Menu: no items configured yet.',
+        'Open Settings'
       ).then(sel => {
-        if (sel === '打开配置页面') {
+        if (sel === 'Open Settings') {
           ConfigPanel.create(context);
         }
       });
@@ -394,13 +394,13 @@ export function activate(context: vscode.ExtensionContext) {
       label: item.label,
       description: item.description || item.command,
       detail: item.cwd
-        ? '工作目录: ' + resolvePlaceholders(item.cwd, workspaceFolder, resource)
+        ? 'cwd: ' + resolvePlaceholders(item.cwd, workspaceFolder, resource)
         : undefined,
       item: item
     }));
 
     vscode.window.showQuickPick(quickItem, {
-      placeHolder: '选择要执行的命令，按 ESC 取消',
+      placeHolder: 'Select a command to run, press ESC to cancel',
       matchOnDescription: true,
       matchOnDetail: true
     }).then(selected => {

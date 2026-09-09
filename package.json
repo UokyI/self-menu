@@ -1,8 +1,8 @@
 {
   "name": "self-menu",
   "displayName": "Self Menu",
-  "description": "自定义右键子菜单，快速执行配置的 Shell 命令",
-  "version": "0.0.5",
+  "description": "Run custom shell commands from a configurable right-click submenu",
+  "version": "0.0.6",
   "publisher": "self-menu",
   "engines": {
     "vscode": "^1.74.0"
@@ -10,6 +10,10 @@
   "categories": [
     "Other"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://tribe.cnblogs.com/uoky/self-menu.git"
+  },
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
@@ -25,11 +29,21 @@
       },
       {
         "command": "self-menu.run.0",
-        "title": "时间",
+        "title": "111",
         "category": "Self Menu"
       },
       {
         "command": "self-menu.run.1",
+        "title": "获取当前环境变量",
+        "category": "Self Menu"
+      },
+      {
+        "command": "self-menu.run.2",
+        "title": "时间",
+        "category": "Self Menu"
+      },
+      {
+        "command": "self-menu.run.3",
         "title": "测试",
         "category": "Self Menu"
       }
@@ -57,6 +71,14 @@
           "group": "self-menu"
         },
         {
+          "command": "self-menu.run.2",
+          "group": "self-menu"
+        },
+        {
+          "command": "self-menu.run.3",
+          "group": "self-menu"
+        },
+        {
           "command": "self-menu.configure",
           "group": "self-menu@99"
         }
@@ -73,26 +95,26 @@
       "properties": {
         "self-menu.items": {
           "type": "array",
-          "description": "配置右键菜单项（标签名与对应的 Shell 命令）",
+          "description": "Menu items shown in the right-click submenu. Each item opens a terminal and runs the configured shell command.",
           "default": [],
           "items": {
             "type": "object",
             "properties": {
               "label": {
                 "type": "string",
-                "description": "菜单显示名称"
+                "description": "Display name of the menu item"
               },
               "command": {
                 "type": "string",
-                "description": "要执行的 Shell 命令"
+                "description": "Shell command to execute"
               },
               "description": {
                 "type": "string",
-                "description": "命令的简短描述（可选）"
+                "description": "Optional short description shown in the picker"
               },
               "cwd": {
                 "type": "string",
-                "description": "执行命令时终端的工作目录（可选）。支持 ${workspaceFolder} ${file} ${path} ${dir} ${name} ${extname} ${basename} 等变量"
+                "description": "Optional working directory for the terminal. Supports variables: ${workspaceFolder} ${file} ${path} ${dir} ${name} ${extname} ${basename}"
               }
             },
             "required": [
