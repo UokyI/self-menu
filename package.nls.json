@@ -1,8 +1,8 @@
 {
-  "self-menu.command.configure": "Self Menu: Configure Items",
-  "self-menu.command.execute": "Self Menu (QuickPick)",
-  "self-menu.submenu.label": "Self Menu",
-  "self-menu.config.title": "Self Menu",
+  "self-menu.command.configure": "Self Sub Menu: Configure Items",
+  "self-menu.command.execute": "Self Sub Menu (QuickPick)",
+  "self-menu.submenu.label": "Self Sub Menu",
+  "self-menu.config.title": "Self Sub Menu",
   "self-menu.items.description": "Menu items shown in the right-click submenu. Each item opens a terminal and runs the configured shell command.",
   "self-menu.items.label.description": "Display name of the menu item",
   "self-menu.items.command.description": "Shell command to execute",

@@ -7,12 +7,12 @@ All notable changes to the "self-menu" extension are documented in this file.
 ### Added
 
 - Initial release.
-- Native right-click **Self Menu** submenu in the editor and Explorer context menus.
+- Native right-click **Self Sub Menu** submenu in the editor and Explorer context menus.
 - Visual configuration panel (webview) to add/edit/delete menu items with label, shell
   command, description and working directory (`cwd`).
 - Generated menu entries are written back into the extension's `package.json` on save;
   a window reload makes the new submenu items appear.
 - Placeholder variable substitution (`${workspaceFolder}`, `${file}`, `${dir}`, `${name}`,
   `${basename}`, `${extname}`, `${path}`).
-- QuickPick fallback command (`Self Menu (QuickPick)`).
+- QuickPick fallback command (`Self Sub Menu (QuickPick)`).
 - English and Simplified Chinese documentation.

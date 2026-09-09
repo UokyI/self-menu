@@ -1,4 +1,4 @@
-# Self Menu
+# Self Sub Menu
 
 Run custom shell commands directly from a right-click submenu in VS Code.
 
@@ -8,7 +8,7 @@ Run custom shell commands directly from a right-click submenu in VS Code.
 
 ## Features
 
-- Adds a **Self Menu** submenu to the editor and Explorer context menus
+- Adds a **Self Sub Menu** submenu to the editor and Explorer context menus
 - Each menu item opens the integrated terminal and runs your configured shell command
 - Every menu item can have its own working directory (`cwd`)
 - Placeholder variables are expanded automatically
@@ -17,16 +17,16 @@ Run custom shell commands directly from a right-click submenu in VS Code.
 
 ```
 Right-click in Editor or Explorer
-└── Self Menu ▶
+└── Self Sub Menu ▶
     ├── Your Command 1
     ├── Your Command 2
-    └── Self Menu: Configure Items
+    └── Self Sub Menu: Configure Items
 ```
 
 ## Quick Start
 
 1. Install the extension.
-2. Right-click anywhere in the editor or Explorer and choose **Self Menu ▶ Self Menu: Configure Items**.
+2. Right-click anywhere in the editor or Explorer and choose **Self Sub Menu ▶ Self Sub Menu: Configure Items**.
 3. Add menu items and click **Save**.
 4. Click **Reload Window (Apply Changes)** — the submenu now shows your commands.
 

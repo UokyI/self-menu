@@ -1,8 +1,8 @@
 {
-  "self-menu.command.configure": "Self Menu：配置菜单项",
-  "self-menu.command.execute": "Self Menu（快速选择）",
-  "self-menu.submenu.label": "Self Menu",
-  "self-menu.config.title": "Self Menu",
+  "self-menu.command.configure": "Self Sub Menu：配置菜单项",
+  "self-menu.command.execute": "Self Sub Menu（快速选择）",
+  "self-menu.submenu.label": "Self Sub Menu",
+  "self-menu.config.title": "Self Sub Menu",
   "self-menu.items.description": "右键子菜单中显示的菜单项。每个菜单项会打开一个终端并运行配置的 Shell 命令。",
   "self-menu.items.label.description": "菜单项的显示名称",
   "self-menu.items.command.description": "要执行的 Shell 命令",

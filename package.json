@@ -1,6 +1,6 @@
 {
   "name": "self-sub-menu",
-  "displayName": "Self Menu",
+  "displayName": "Self Sub Menu",
   "description": "Run custom shell commands from a configurable right-click submenu",
   "version": "0.0.1",
   "publisher": "uokyi",
@@ -21,37 +21,37 @@
       {
         "command": "self-menu.configure",
         "title": "%self-menu.command.configure%",
-        "category": "Self Menu"
+        "category": "Self Sub Menu"
       },
       {
         "command": "self-menu.execute",
         "title": "%self-menu.command.execute%",
-        "category": "Self Menu"
+        "category": "Self Sub Menu"
       },
       {
         "command": "self-menu.run.0",
         "title": "wwwww",
-        "category": "Self Menu"
+        "category": "Self Sub Menu"
       },
       {
         "command": "self-menu.run.1",
         "title": "111",
-        "category": "Self Menu"
+        "category": "Self Sub Menu"
       },
       {
         "command": "self-menu.run.2",
         "title": "获取当前环境变量",
-        "category": "Self Menu"
+        "category": "Self Sub Menu"
       },
       {
         "command": "self-menu.run.3",
         "title": "时间",
-        "category": "Self Menu"
+        "category": "Self Sub Menu"
       },
       {
         "command": "self-menu.run.4",
         "title": "测试",
-        "category": "Self Menu"
+        "category": "Self Sub Menu"
       }
     ],
     "menus": {

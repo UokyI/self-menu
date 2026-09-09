@@ -71,7 +71,7 @@ function resolvePlaceholders(text: string, workspaceFolder: string | undefined, 
 
 function executeCommand(command: string, cwd?: string): void {
   const terminal = vscode.window.createTerminal({
-    name: 'Self Menu',
+    name: 'Self Sub Menu',
     cwd: cwd
   });
   terminal.show(true);
@@ -102,14 +102,14 @@ interface ManifestMenuEntry {
 
 function buildContributes(items: MenuItem[]): any {
   const commands: ManifestCommand[] = [
-    { command: CONFIGURE_CMD, title: '%self-menu.command.configure%', category: 'Self Menu' },
-    { command: 'self-menu.execute', title: '%self-menu.command.execute%', category: 'Self Menu' }
+    { command: CONFIGURE_CMD, title: '%self-menu.command.configure%', category: 'Self Sub Menu' },
+    { command: 'self-menu.execute', title: '%self-menu.command.execute%', category: 'Self Sub Menu' }
   ];
 
   const submenuEntries: ManifestMenuEntry[] = [];
   items.forEach((item, i) => {
     const id = RUN_PREFIX + i;
-    commands.push({ command: id, title: item.label || 'Self Menu', category: 'Self Menu' });
+    commands.push({ command: id, title: item.label || 'Self Sub Menu', category: 'Self Sub Menu' });
     submenuEntries.push({ command: id, group: 'self-menu' });
   });
   submenuEntries.push({ command: CONFIGURE_CMD, group: 'self-menu@99' });
@@ -152,7 +152,7 @@ function syncManifestIfNeeded(context: vscode.ExtensionContext, items: MenuItem[
     if (currentRunCount(manifest) !== items.length) {
       syncManifest(context, items);
       vscode.window.showInformationMessage(
-        tl('Self Menu: menu items changed. Reload the window to update the context submenu.'),
+        tl('Self Sub Menu: menu items changed. Reload the window to update the context submenu.'),
         tl('Reload Window')
       ).then(sel => {
         if (sel === tl('Reload Window')) {
@@ -179,7 +179,7 @@ class ConfigPanel {
 
     const panel = vscode.window.createWebviewPanel(
       'self-menu-config',
-      'Self Menu Settings',
+      'Self Sub Menu Settings',
       vscode.ViewColumn.One,
       {
         enableScripts: true,
@@ -222,7 +222,7 @@ class ConfigPanel {
         }
         this.dispose();
         vscode.window.showInformationMessage(
-          tl('Self Menu: settings saved. Reload the window to update the context submenu.'),
+          tl('Self Sub Menu: settings saved. Reload the window to update the context submenu.'),
           tl('Reload Window')
         ).then(sel => {
           if (sel === tl('Reload Window')) {
@@ -275,7 +275,7 @@ class ConfigPanel {
 </style>
 </head>
 <body>
-<h1>${tl('Self Menu Items')}</h1>
+<h1>${tl('Self Sub Menu Items')}</h1>
 <div class="hint">${tl('Saved items are written into the extension manifest and shown in the right-click submenu. Each item opens a terminal and runs the configured command.')}</div>
 <div class="hint">${varHelp}</div>
 <div class="toolbar">
@@ -387,7 +387,7 @@ export function activate(context: vscode.ExtensionContext) {
     const itemsArr = getItems();
     if (itemsArr.length === 0) {
       vscode.window.showWarningMessage(
-        tl('Self Menu: no items configured yet.'),
+        tl('Self Sub Menu: no items configured yet.'),
         tl('Open Settings')
       ).then(sel => {
         if (sel === tl('Open Settings')) {
