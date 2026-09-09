@@ -2,6 +2,13 @@
 
 All notable changes to the "self-menu" extension are documented in this file.
 
+## [0.0.3] - 2026-09-09
+
+### Fixed
+
+- Removed hard-coded test menu items that were accidentally shipped in the extension
+  manifest; the submenu now only contains the built-in configuration entry.
+
 ## [0.0.2] - 2026-09-09
 
 ### Added
