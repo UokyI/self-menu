@@ -25,6 +25,11 @@
         "category": "Self Sub Menu"
       },
       {
+        "command": "self-sub-menu.reload",
+        "title": "%self-sub-menu.command.reload%",
+        "category": "Self Sub Menu"
+      },
+      {
         "command": "self-sub-menu.execute",
         "title": "%self-sub-menu.command.execute%",
         "category": "Self Sub Menu"
@@ -44,6 +49,10 @@
         }
       ],
       "self-sub-menu.submenu": [
+        {
+          "command": "self-sub-menu.reload",
+          "group": "self-sub-menu@50"
+        },
         {
           "command": "self-sub-menu.configure",
           "group": "self-sub-menu@99"

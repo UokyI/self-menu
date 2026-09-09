@@ -1,6 +1,7 @@
 {
   "self-sub-menu.command.configure": "Self Sub Menu：配置菜单项",
   "self-sub-menu.command.execute": "Self Sub Menu（快速选择）",
+  "self-sub-menu.command.reload": "Self Sub Menu：重载",
   "self-sub-menu.submenu.label": "Self Sub Menu",
   "self-sub-menu.config.title": "Self Sub Menu",
   "self-sub-menu.items.description": "右键子菜单中显示的菜单项。每个菜单项会打开一个终端并运行配置的 Shell 命令。",

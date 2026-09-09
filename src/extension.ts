@@ -11,16 +11,29 @@ interface MenuItem {
 
 const RUN_PREFIX = 'self-sub-menu.run.';
 const CONFIGURE_CMD = 'self-sub-menu.configure';
+const RELOAD_CMD = 'self-sub-menu.reload';
 
 const tl = (message: string, ...args: any[]): string =>
   vscode.l10n.t(message, ...args);
 
 function getItems(): MenuItem[] {
-  const config = vscode.workspace.getConfiguration('self-sub-menu');
-  return config.get<MenuItem[]>('items', []);
+  try {
+    if (!vscode || !vscode.workspace || typeof vscode.workspace.getConfiguration !== 'function') {
+      console.error('Self Sub Menu: vscode.workspace unavailable at getItems()');
+      return [];
+    }
+    const config = vscode.workspace.getConfiguration('self-sub-menu');
+    return config.get<MenuItem[]>('items', []) || [];
+  } catch (e) {
+    console.error('Self Sub Menu getItems error', e);
+    return [];
+  }
 }
 
 function setItems(items: MenuItem[]): Thenable<void> {
+  if (!vscode || !vscode.workspace || typeof vscode.workspace.getConfiguration !== 'function') {
+    return Promise.reject(new Error('vscode.workspace unavailable in setItems()'));
+  }
   const config = vscode.workspace.getConfiguration('self-sub-menu');
   return config.update('items', items, vscode.ConfigurationTarget.Global);
 }
@@ -111,6 +124,7 @@ function syncManifest(context: vscode.ExtensionContext, items: MenuItem[]): void
   const contributes = manifest.contributes || {};
   const commands: ManifestCommand[] = [
     { command: CONFIGURE_CMD, title: '%self-sub-menu.command.configure%', category: 'Self Sub Menu' },
+    { command: RELOAD_CMD, title: '%self-sub-menu.command.reload%', category: 'Self Sub Menu' },
     { command: 'self-sub-menu.execute', title: '%self-sub-menu.command.execute%', category: 'Self Sub Menu' }
   ];
   const submenuEntries: ManifestMenuEntry[] = [];
@@ -119,6 +133,8 @@ function syncManifest(context: vscode.ExtensionContext, items: MenuItem[]): void
     commands.push({ command: id, title: item.label || 'Self Sub Menu', category: 'Self Sub Menu' });
     submenuEntries.push({ command: id, group: 'self-sub-menu' });
   });
+  // ensure built-in reload appears before configure in the submenu
+  submenuEntries.unshift({ command: RELOAD_CMD, group: 'self-sub-menu@50' });
   submenuEntries.push({ command: CONFIGURE_CMD, group: 'self-sub-menu@99' });
 
   contributes.commands = commands;
@@ -213,20 +229,12 @@ class ConfigPanel {
 
         await setItems(items);
         try {
-          syncManifest(this.context, items);
+            syncManifest(this.context, items);
         } catch (err: any) {
           vscode.window.showErrorMessage(tl('Failed to write back package.json: {0}', err.message));
           break;
         }
         this.dispose();
-        vscode.window.showInformationMessage(
-          tl('Self Sub Menu: settings saved. Reload the window to update the context submenu.'),
-          tl('Reload Window')
-        ).then(sel => {
-          if (sel === tl('Reload Window')) {
-            vscode.commands.executeCommand('workbench.action.reloadWindow');
-          }
-        });
         break;
       }
       case 'saveAndReload': {
@@ -245,7 +253,20 @@ class ConfigPanel {
           break;
         }
         this.dispose();
-        vscode.commands.executeCommand('workbench.action.reloadWindow');
+        // After saving and syncing manifest, trigger a reload to apply menu changes
+        try {
+          vscode.commands.executeCommand('workbench.action.reloadWindow');
+        } catch (e) {
+          // ignore
+        }
+        break;
+      }
+      case 'reload': {
+        try {
+          vscode.commands.executeCommand('workbench.action.reloadWindow');
+        } catch (e) {
+          // ignore
+        }
         break;
       }
       case 'error': {
@@ -293,9 +314,9 @@ class ConfigPanel {
 <div class="toolbar">
   <button class="btn btn-primary" id="addBtn">${tl('+ Add Item')}</button>
   <button class="btn btn-ghost" id="saveBtn" style="margin-left:8px">${tl('Save')}</button>
-  <button class="btn btn-ghost" id="saveReloadBtn" style="margin-left:8px">${tl('Save (Reload Window to Apply Changes)')}</button>
+  <button class="btn btn-ghost" id="reloadBtn" style="margin-left:8px">${tl('Reload Window')}</button>
 </div>
-<div class="hint">${tl('Tip: after adding/modifying/deleting items, click "Save (Reload Window to Apply Changes)" to update the context submenu.')}</div>
+<div class="hint">${tl('Tip: after adding/modifying/deleting items, click "Save" to write settings. VS Code may prompt to reload the window to apply context submenu changes; run "Reload Window" from the Command Palette (Ctrl+Shift+P) if needed.')}</div>
 <div id="list"></div>
 <div id="empty" class="empty" style="display:none">${tl('No items yet. Click "Add Item" to start.')}</div>
 <script>
@@ -338,10 +359,8 @@ class ConfigPanel {
     }))});
   });
 
-  document.getElementById('saveReloadBtn').addEventListener('click', () => {
-    vscode.postMessage({ type: 'saveAndReload', items: items.map(it => ({
-      label: it.label, command: it.command, description: it.description || undefined, cwd: it.cwd || undefined
-    }))});
+  document.getElementById('reloadBtn').addEventListener('click', () => {
+    vscode.postMessage({ type: 'reload' });
   });
 
   document.getElementById('list').addEventListener('input', (e) => {
@@ -437,6 +456,16 @@ export function activate(context: vscode.ExtensionContext) {
   const configureDisposable = vscode.commands.registerCommand(CONFIGURE_CMD, () => {
     ConfigPanel.create(context);
   });
+
+  const reloadDisposable = vscode.commands.registerCommand('self-sub-menu.reload', () => {
+    try {
+      vscode.commands.executeCommand('workbench.action.reloadWindow');
+    } catch (e) {
+      // ignore
+    }
+  });
+
+  context.subscriptions.push(reloadDisposable);
 
   context.subscriptions.push(executeDisposable, configureDisposable);
 }

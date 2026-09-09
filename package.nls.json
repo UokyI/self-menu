@@ -1,6 +1,7 @@
 {
   "self-sub-menu.command.configure": "Self Sub Menu: Configure Items",
   "self-sub-menu.command.execute": "Self Sub Menu (QuickPick)",
+  "self-sub-menu.command.reload": "Self Sub Menu: Reload",
   "self-sub-menu.submenu.label": "Self Sub Menu",
   "self-sub-menu.config.title": "Self Sub Menu",
   "self-sub-menu.items.description": "Menu items shown in the right-click submenu. Each item opens a terminal and runs the configured shell command.",
