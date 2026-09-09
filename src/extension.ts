@@ -9,19 +9,19 @@ interface MenuItem {
   cwd?: string;
 }
 
-const RUN_PREFIX = 'self-menu.run.';
-const CONFIGURE_CMD = 'self-menu.configure';
+const RUN_PREFIX = 'self-sub-menu.run.';
+const CONFIGURE_CMD = 'self-sub-menu.configure';
 
 const tl = (message: string, ...args: any[]): string =>
   vscode.l10n.t(message, ...args);
 
 function getItems(): MenuItem[] {
-  const config = vscode.workspace.getConfiguration('self-menu');
+  const config = vscode.workspace.getConfiguration('self-sub-menu');
   return config.get<MenuItem[]>('items', []);
 }
 
 function setItems(items: MenuItem[]): Thenable<void> {
-  const config = vscode.workspace.getConfiguration('self-menu');
+  const config = vscode.workspace.getConfiguration('self-sub-menu');
   return config.update('items', items, vscode.ConfigurationTarget.Global);
 }
 
@@ -100,50 +100,48 @@ interface ManifestMenuEntry {
   group?: string;
 }
 
-function buildContributes(items: MenuItem[]): any {
-  const commands: ManifestCommand[] = [
-    { command: CONFIGURE_CMD, title: '%self-menu.command.configure%', category: 'Self Sub Menu' },
-    { command: 'self-menu.execute', title: '%self-menu.command.execute%', category: 'Self Sub Menu' }
-  ];
-
-  const submenuEntries: ManifestMenuEntry[] = [];
-  items.forEach((item, i) => {
-    const id = RUN_PREFIX + i;
-    commands.push({ command: id, title: item.label || 'Self Sub Menu', category: 'Self Sub Menu' });
-    submenuEntries.push({ command: id, group: 'self-menu' });
-  });
-  submenuEntries.push({ command: CONFIGURE_CMD, group: 'self-menu@99' });
-
-  return {
-    commands,
-    menus: {
-      'editor/context': [{ submenu: 'self-menu.submenu', group: 'self-menu@1' }],
-      'explorer/context': [{ submenu: 'self-menu.submenu', group: 'self-menu@1' }],
-      'self-menu.submenu': submenuEntries
-    },
-    submenus: [{ id: 'self-menu.submenu', label: '%self-menu.submenu.label%' }]
-  };
-}
-
 function getManifestPath(context: vscode.ExtensionContext): string {
   return path.join(context.extensionPath, 'package.json');
-}
-
-function currentRunCount(manifest: any): number {
-  const commands: ManifestCommand[] = manifest?.contributes?.commands || [];
-  return commands.filter((c: ManifestCommand) => c.command.startsWith(RUN_PREFIX)).length;
 }
 
 function syncManifest(context: vscode.ExtensionContext, items: MenuItem[]): void {
   const manifestPath = getManifestPath(context);
   const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
 
-  const config = manifest.contributes.configuration;
-  const contributes = buildContributes(items);
-  contributes.configuration = config;
+  const contributes = manifest.contributes || {};
+  const commands: ManifestCommand[] = [
+    { command: CONFIGURE_CMD, title: '%self-sub-menu.command.configure%', category: 'Self Sub Menu' },
+    { command: 'self-sub-menu.execute', title: '%self-sub-menu.command.execute%', category: 'Self Sub Menu' }
+  ];
+  const submenuEntries: ManifestMenuEntry[] = [];
+  items.forEach((item, i) => {
+    const id = RUN_PREFIX + i;
+    commands.push({ command: id, title: item.label || 'Self Sub Menu', category: 'Self Sub Menu' });
+    submenuEntries.push({ command: id, group: 'self-sub-menu' });
+  });
+  submenuEntries.push({ command: CONFIGURE_CMD, group: 'self-sub-menu@99' });
+
+  contributes.commands = commands;
+  if (!contributes.menus) {
+    contributes.menus = {
+      'editor/context': [{ submenu: 'self-sub-menu.submenu', group: 'self-sub-menu@1' }],
+      'explorer/context': [{ submenu: 'self-sub-menu.submenu', group: 'self-sub-menu@1' }],
+      'self-sub-menu.submenu': submenuEntries
+    };
+  } else {
+    contributes.menus['self-sub-menu.submenu'] = submenuEntries;
+  }
+  if (!contributes.submenus) {
+    contributes.submenus = [{ id: 'self-sub-menu.submenu', label: '%self-sub-menu.submenu.label%' }];
+  }
 
   manifest.contributes = contributes;
   fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2), 'utf8');
+}
+
+function currentRunCount(manifest: any): number {
+  const commands: ManifestCommand[] = manifest?.contributes?.commands || [];
+  return commands.filter((c: ManifestCommand) => c.command.startsWith(RUN_PREFIX)).length;
 }
 
 function syncManifestIfNeeded(context: vscode.ExtensionContext, items: MenuItem[]): void {
@@ -178,7 +176,7 @@ class ConfigPanel {
     }
 
     const panel = vscode.window.createWebviewPanel(
-      'self-menu-config',
+      'self-sub-menu-config',
       'Self Sub Menu Settings',
       vscode.ViewColumn.One,
       {
@@ -231,7 +229,21 @@ class ConfigPanel {
         });
         break;
       }
-      case 'reload': {
+      case 'saveAndReload': {
+        const items: MenuItem[] = (message.items || []).map((it: any) => ({
+          label: String(it.label || '').trim(),
+          command: String(it.command || ''),
+          description: it.description ? String(it.description) : undefined,
+          cwd: it.cwd ? String(it.cwd) : undefined
+        })).filter((it: MenuItem) => it.label && it.command);
+
+        await setItems(items);
+        try {
+          syncManifest(this.context, items);
+        } catch (err: any) {
+          vscode.window.showErrorMessage(tl('Failed to write back package.json: {0}', err.message));
+          break;
+        }
         this.dispose();
         vscode.commands.executeCommand('workbench.action.reloadWindow');
         break;
@@ -281,9 +293,9 @@ class ConfigPanel {
 <div class="toolbar">
   <button class="btn btn-primary" id="addBtn">${tl('+ Add Item')}</button>
   <button class="btn btn-ghost" id="saveBtn" style="margin-left:8px">${tl('Save')}</button>
-  <button class="btn btn-ghost" id="reloadBtn" style="margin-left:8px">${tl('Reload Window (Apply Changes)')}</button>
+  <button class="btn btn-ghost" id="saveReloadBtn" style="margin-left:8px">${tl('Save (Reload Window to Apply Changes)')}</button>
 </div>
-<div class="hint">${tl('Tip: after adding/modifying/deleting items, click "Save", then "Reload Window" to update the context submenu.')}</div>
+<div class="hint">${tl('Tip: after adding/modifying/deleting items, click "Save (Reload Window to Apply Changes)" to update the context submenu.')}</div>
 <div id="list"></div>
 <div id="empty" class="empty" style="display:none">${tl('No items yet. Click "Add Item" to start.')}</div>
 <script>
@@ -326,8 +338,10 @@ class ConfigPanel {
     }))});
   });
 
-  document.getElementById('reloadBtn').addEventListener('click', () => {
-    vscode.postMessage({ type: 'reload' });
+  document.getElementById('saveReloadBtn').addEventListener('click', () => {
+    vscode.postMessage({ type: 'saveAndReload', items: items.map(it => ({
+      label: it.label, command: it.command, description: it.description || undefined, cwd: it.cwd || undefined
+    }))});
   });
 
   document.getElementById('list').addEventListener('input', (e) => {
@@ -383,7 +397,7 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(disposable);
   });
 
-  const executeDisposable = vscode.commands.registerCommand('self-menu.execute', (...args: unknown[]) => {
+  const executeDisposable = vscode.commands.registerCommand('self-sub-menu.execute', (...args: unknown[]) => {
     const itemsArr = getItems();
     if (itemsArr.length === 0) {
       vscode.window.showWarningMessage(

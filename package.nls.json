@@ -1,11 +1,11 @@
 {
-  "self-menu.command.configure": "Self Sub Menu: Configure Items",
-  "self-menu.command.execute": "Self Sub Menu (QuickPick)",
-  "self-menu.submenu.label": "Self Sub Menu",
-  "self-menu.config.title": "Self Sub Menu",
-  "self-menu.items.description": "Menu items shown in the right-click submenu. Each item opens a terminal and runs the configured shell command.",
-  "self-menu.items.label.description": "Display name of the menu item",
-  "self-menu.items.command.description": "Shell command to execute",
-  "self-menu.items.description.description": "Optional short description shown in the picker",
-  "self-menu.items.cwd.description": "Optional working directory for the terminal. Supports variables: ${workspaceFolder} ${file} ${path} ${dir} ${name} ${extname} ${basename}"
+  "self-sub-menu.command.configure": "Self Sub Menu: Configure Items",
+  "self-sub-menu.command.execute": "Self Sub Menu (QuickPick)",
+  "self-sub-menu.submenu.label": "Self Sub Menu",
+  "self-sub-menu.config.title": "Self Sub Menu",
+  "self-sub-menu.items.description": "Menu items shown in the right-click submenu. Each item opens a terminal and runs the configured shell command.",
+  "self-sub-menu.items.label.description": "Display name of the menu item",
+  "self-sub-menu.items.command.description": "Shell command to execute",
+  "self-sub-menu.items.description.description": "Optional short description shown in the picker",
+  "self-sub-menu.items.cwd.description": "Optional working directory for the terminal. Supports variables: ${workspaceFolder} ${file} ${path} ${dir} ${name} ${extname} ${basename}"
 }

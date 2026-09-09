@@ -38,7 +38,7 @@ You can also configure items directly in `settings.json`:
 
 ```json
 {
-  "self-menu.items": [
+  "self-sub-menu.items": [
     {
       "label": "Build",
       "command": "npm run build",

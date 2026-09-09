@@ -20,67 +20,67 @@
   "contributes": {
     "commands": [
       {
-        "command": "self-menu.configure",
-        "title": "%self-menu.command.configure%",
+        "command": "self-sub-menu.configure",
+        "title": "%self-sub-menu.command.configure%",
         "category": "Self Sub Menu"
       },
       {
-        "command": "self-menu.execute",
-        "title": "%self-menu.command.execute%",
+        "command": "self-sub-menu.execute",
+        "title": "%self-sub-menu.command.execute%",
         "category": "Self Sub Menu"
       }
     ],
     "menus": {
       "editor/context": [
         {
-          "submenu": "self-menu.submenu",
-          "group": "self-menu@1"
+          "submenu": "self-sub-menu.submenu",
+          "group": "self-sub-menu@1"
         }
       ],
       "explorer/context": [
         {
-          "submenu": "self-menu.submenu",
-          "group": "self-menu@1"
+          "submenu": "self-sub-menu.submenu",
+          "group": "self-sub-menu@1"
         }
       ],
-      "self-menu.submenu": [
+      "self-sub-menu.submenu": [
         {
-          "command": "self-menu.configure",
-          "group": "self-menu@99"
+          "command": "self-sub-menu.configure",
+          "group": "self-sub-menu@99"
         }
       ]
     },
     "submenus": [
       {
-        "id": "self-menu.submenu",
-        "label": "%self-menu.submenu.label%"
+        "id": "self-sub-menu.submenu",
+        "label": "%self-sub-menu.submenu.label%"
       }
     ],
     "configuration": {
-      "title": "%self-menu.config.title%",
+      "title": "%self-sub-menu.config.title%",
       "properties": {
-        "self-menu.items": {
+        "self-sub-menu.items": {
           "type": "array",
-          "description": "%self-menu.items.description%",
+          "description": "%self-sub-menu.items.description%",
           "default": [],
           "items": {
             "type": "object",
             "properties": {
               "label": {
                 "type": "string",
-                "description": "%self-menu.items.label.description%"
+                "description": "%self-sub-menu.items.label.description%"
               },
               "command": {
                 "type": "string",
-                "description": "%self-menu.items.command.description%"
+                "description": "%self-sub-menu.items.command.description%"
               },
               "description": {
                 "type": "string",
-                "description": "%self-menu.items.description.description%"
+                "description": "%self-sub-menu.items.description.description%"
               },
               "cwd": {
                 "type": "string",
-                "description": "%self-menu.items.cwd.description%"
+                "description": "%self-sub-menu.items.cwd.description%"
               }
             },
             "required": [

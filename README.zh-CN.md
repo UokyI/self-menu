@@ -38,7 +38,7 @@
 
 ```json
 {
-  "self-menu.items": [
+  "self-sub-menu.items": [
     {
       "label": "构建",
       "command": "npm run build",

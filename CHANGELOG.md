@@ -1,6 +1,6 @@
 # Change Log
 
-All notable changes to the "self-menu" extension are documented in this file.
+All notable changes to the "self-sub-menu" extension are documented in this file.
 
 ## [0.0.3] - 2026-09-09
 
