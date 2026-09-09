@@ -2,7 +2,7 @@
 
 Run custom shell commands directly from a right-click submenu in VS Code.
 
-![Version](https://img.shields.io/badge/version-0.0.1-blue)
+![Version](https://img.shields.io/badge/version-0.0.2-blue)
 
 **English** | [简体中文](README.zh-CN.md)
 
