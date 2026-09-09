@@ -12,7 +12,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://tribe.cnblogs.com/uoky/self-menu.git"
+    "url": "https://github.com/UokyI/self-menu.git"
   },
   "main": "./out/extension.js",
   "contributes": {
