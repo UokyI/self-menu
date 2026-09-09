@@ -1,0 +1,117 @@
+{
+  "name": "self-menu",
+  "displayName": "Self Menu",
+  "description": "自定义右键子菜单，快速执行配置的 Shell 命令",
+  "version": "0.0.5",
+  "publisher": "self-menu",
+  "engines": {
+    "vscode": "^1.74.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "self-menu.configure",
+        "title": "Self Menu: 配置菜单项",
+        "category": "Self Menu"
+      },
+      {
+        "command": "self-menu.execute",
+        "title": "Self Menu (QuickPick)",
+        "category": "Self Menu"
+      },
+      {
+        "command": "self-menu.run.0",
+        "title": "时间",
+        "category": "Self Menu"
+      },
+      {
+        "command": "self-menu.run.1",
+        "title": "测试",
+        "category": "Self Menu"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "submenu": "self-menu.submenu",
+          "group": "self-menu@1"
+        }
+      ],
+      "explorer/context": [
+        {
+          "submenu": "self-menu.submenu",
+          "group": "self-menu@1"
+        }
+      ],
+      "self-menu.submenu": [
+        {
+          "command": "self-menu.run.0",
+          "group": "self-menu"
+        },
+        {
+          "command": "self-menu.run.1",
+          "group": "self-menu"
+        },
+        {
+          "command": "self-menu.configure",
+          "group": "self-menu@99"
+        }
+      ]
+    },
+    "submenus": [
+      {
+        "id": "self-menu.submenu",
+        "label": "Self Menu"
+      }
+    ],
+    "configuration": {
+      "title": "Self Menu",
+      "properties": {
+        "self-menu.items": {
+          "type": "array",
+          "description": "配置右键菜单项（标签名与对应的 Shell 命令）",
+          "default": [],
+          "items": {
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": "string",
+                "description": "菜单显示名称"
+              },
+              "command": {
+                "type": "string",
+                "description": "要执行的 Shell 命令"
+              },
+              "description": {
+                "type": "string",
+                "description": "命令的简短描述（可选）"
+              },
+              "cwd": {
+                "type": "string",
+                "description": "执行命令时终端的工作目录（可选）。支持 ${workspaceFolder} ${file} ${path} ${dir} ${name} ${extname} ${basename} 等变量"
+              }
+            },
+            "required": [
+              "label",
+              "command"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.74.0",
+    "@types/node": "^18.0.0",
+    "typescript": "^5.3.0"
+  }
+}
