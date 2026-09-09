@@ -1,0 +1,12 @@
+{
+  "self-menu.description": "Run custom shell commands from a configurable right-click submenu",
+  "self-menu.command.configure": "Self Menu: Configure Items",
+  "self-menu.command.execute": "Self Menu (QuickPick)",
+  "self-menu.submenu.label": "Self Menu",
+  "self-menu.config.title": "Self Menu",
+  "self-menu.items.description": "Menu items shown in the right-click submenu. Each item opens a terminal and runs the configured shell command.",
+  "self-menu.items.label.description": "Display name of the menu item",
+  "self-menu.items.command.description": "Shell command to execute",
+  "self-menu.items.description.description": "Optional short description shown in the picker",
+  "self-menu.items.cwd.description": "Optional working directory for the terminal. Supports variables: ${workspaceFolder} ${file} ${path} ${dir} ${name} ${extname} ${basename}"
+}

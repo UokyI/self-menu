@@ -1,7 +1,7 @@
 {
   "name": "self-menu",
   "displayName": "Self Menu",
-  "description": "Run custom shell commands from a configurable right-click submenu",
+  "description": "%self-menu.description%",
   "version": "0.0.1",
   "publisher": "self-menu",
   "engines": {
@@ -15,16 +15,17 @@
     "url": "https://github.com/UokyI/self-menu.git"
   },
   "main": "./out/extension.js",
+  "l10n": "./l10n",
   "contributes": {
     "commands": [
       {
         "command": "self-menu.configure",
-        "title": "Self Menu: Configure Items",
+        "title": "%self-menu.command.configure%",
         "category": "Self Menu"
       },
       {
         "command": "self-menu.execute",
-        "title": "Self Menu (QuickPick)",
+        "title": "%self-menu.command.execute%",
         "category": "Self Menu"
       },
       {
@@ -96,34 +97,34 @@
     "submenus": [
       {
         "id": "self-menu.submenu",
-        "label": "Self Menu"
+        "label": "%self-menu.submenu.label%"
       }
     ],
     "configuration": {
-      "title": "Self Menu",
+      "title": "%self-menu.config.title%",
       "properties": {
         "self-menu.items": {
           "type": "array",
-          "description": "Menu items shown in the right-click submenu. Each item opens a terminal and runs the configured shell command.",
+          "description": "%self-menu.items.description%",
           "default": [],
           "items": {
             "type": "object",
             "properties": {
               "label": {
                 "type": "string",
-                "description": "Display name of the menu item"
+                "description": "%self-menu.items.label.description%"
               },
               "command": {
                 "type": "string",
-                "description": "Shell command to execute"
+                "description": "%self-menu.items.command.description%"
               },
               "description": {
                 "type": "string",
-                "description": "Optional short description shown in the picker"
+                "description": "%self-menu.items.description.description%"
               },
               "cwd": {
                 "type": "string",
-                "description": "Optional working directory for the terminal. Supports variables: ${workspaceFolder} ${file} ${path} ${dir} ${name} ${extname} ${basename}"
+                "description": "%self-menu.items.cwd.description%"
               }
             },
             "required": [

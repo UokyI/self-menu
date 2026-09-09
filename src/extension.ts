@@ -12,6 +12,9 @@ interface MenuItem {
 const RUN_PREFIX = 'self-menu.run.';
 const CONFIGURE_CMD = 'self-menu.configure';
 
+const tl = (message: string, ...args: any[]): string =>
+  vscode.l10n.t(message, ...args);
+
 function getItems(): MenuItem[] {
   const config = vscode.workspace.getConfiguration('self-menu');
   return config.get<MenuItem[]>('items', []);
@@ -99,8 +102,8 @@ interface ManifestMenuEntry {
 
 function buildContributes(items: MenuItem[]): any {
   const commands: ManifestCommand[] = [
-    { command: CONFIGURE_CMD, title: 'Self Menu: Configure Items', category: 'Self Menu' },
-    { command: 'self-menu.execute', title: 'Self Menu (QuickPick)', category: 'Self Menu' }
+    { command: CONFIGURE_CMD, title: '%self-menu.command.configure%', category: 'Self Menu' },
+    { command: 'self-menu.execute', title: '%self-menu.command.execute%', category: 'Self Menu' }
   ];
 
   const submenuEntries: ManifestMenuEntry[] = [];
@@ -118,7 +121,7 @@ function buildContributes(items: MenuItem[]): any {
       'explorer/context': [{ submenu: 'self-menu.submenu', group: 'self-menu@1' }],
       'self-menu.submenu': submenuEntries
     },
-    submenus: [{ id: 'self-menu.submenu', label: 'Self Menu' }]
+    submenus: [{ id: 'self-menu.submenu', label: '%self-menu.submenu.label%' }]
   };
 }
 
@@ -149,10 +152,10 @@ function syncManifestIfNeeded(context: vscode.ExtensionContext, items: MenuItem[
     if (currentRunCount(manifest) !== items.length) {
       syncManifest(context, items);
       vscode.window.showInformationMessage(
-        'Self Menu: menu items changed. Reload the window to update the context submenu.',
-        'Reload Window'
+        tl('Self Menu: menu items changed. Reload the window to update the context submenu.'),
+        tl('Reload Window')
       ).then(sel => {
-        if (sel === 'Reload Window') {
+        if (sel === tl('Reload Window')) {
           vscode.commands.executeCommand('workbench.action.reloadWindow');
         }
       });
@@ -167,7 +170,6 @@ class ConfigPanel {
   private readonly panel: vscode.WebviewPanel;
   private readonly context: vscode.ExtensionContext;
   private disposables: vscode.Disposable[] = [];
-  private readonly varHelp = 'Placeholder variables for command and cwd: ${workspaceFolder} ${file} ${dir} ${name} ${basename} ${extname} ${path} — workspace root, right-clicked resource path, its directory, file/folder name (with extension), file name (without extension), extension, full path.';
 
   public static create(context: vscode.ExtensionContext): void {
     if (ConfigPanel.currentPanel) {
@@ -215,15 +217,15 @@ class ConfigPanel {
         try {
           syncManifest(this.context, items);
         } catch (err: any) {
-          vscode.window.showErrorMessage('Failed to write back package.json: ' + err.message);
+          vscode.window.showErrorMessage(tl('Failed to write back package.json: {0}', err.message));
           break;
         }
         this.dispose();
         vscode.window.showInformationMessage(
-          'Self Menu: settings saved. Reload the window to update the context submenu.',
-          'Reload Window'
+          tl('Self Menu: settings saved. Reload the window to update the context submenu.'),
+          tl('Reload Window')
         ).then(sel => {
-if (sel === 'Reload Window') {
+          if (sel === tl('Reload Window')) {
             vscode.commands.executeCommand('workbench.action.reloadWindow');
           }
         });
@@ -235,15 +237,22 @@ if (sel === 'Reload Window') {
         break;
       }
       case 'error': {
-        vscode.window.showErrorMessage(message.message || 'Operation failed');
+        vscode.window.showErrorMessage(message.message || tl('Operation failed'));
         break;
       }
     }
   }
 
   private getHtml(): string {
+    const isZh = /^zh/i.test(vscode.env.language);
+    const langTag = isZh ? 'zh-CN' : 'en';
+    const unnamed = tl('Unnamed');
+    const varHelp = tl(
+      'Placeholder variables for command and cwd: {placeholders} — workspace root, right-clicked resource path, its directory, file/folder name (with extension), file name (without extension), extension, full path.',
+      { placeholders: '${workspaceFolder} ${file} ${dir} ${name} ${basename} ${extname} ${path}' }
+    );
     return `<!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="${langTag}">
 <head>
 <meta charset="UTF-8">
 <style>
@@ -266,17 +275,17 @@ if (sel === 'Reload Window') {
 </style>
 </head>
 <body>
-<h1>Self Menu Items</h1>
-<div class="hint">Saved items are written into the extension manifest and shown in the right-click submenu. Each item opens a terminal and runs the configured command.</div>
-<div class="hint">${this.varHelp}</div>
+<h1>${tl('Self Menu Items')}</h1>
+<div class="hint">${tl('Saved items are written into the extension manifest and shown in the right-click submenu. Each item opens a terminal and runs the configured command.')}</div>
+<div class="hint">${varHelp}</div>
 <div class="toolbar">
-  <button class="btn btn-primary" id="addBtn">+ Add Item</button>
-  <button class="btn btn-ghost" id="saveBtn" style="margin-left:8px">Save</button>
-  <button class="btn btn-ghost" id="reloadBtn" style="margin-left:8px">Reload Window (Apply Changes)</button>
+  <button class="btn btn-primary" id="addBtn">${tl('+ Add Item')}</button>
+  <button class="btn btn-ghost" id="saveBtn" style="margin-left:8px">${tl('Save')}</button>
+  <button class="btn btn-ghost" id="reloadBtn" style="margin-left:8px">${tl('Reload Window (Apply Changes)')}</button>
 </div>
-<div class="hint">Tip: after adding/modifying/deleting items, click "Save", then "Reload Window" to update the context submenu.</div>
+<div class="hint">${tl('Tip: after adding/modifying/deleting items, click "Save", then "Reload Window" to update the context submenu.')}</div>
 <div id="list"></div>
-<div id="empty" class="empty" style="display:none">No items yet. Click "Add Item" to start.</div>
+<div id="empty" class="empty" style="display:none">${tl('No items yet. Click "Add Item" to start.')}</div>
 <script>
   const vscode = acquireVsCodeApi();
   let items = [];
@@ -291,13 +300,13 @@ if (sel === 'Reload Window') {
       div.className = 'item';
       div.innerHTML =
         '<div class="item-header">' +
-          '<span class="item-title" data-idx="' + idx + '">' + esc(it.label || 'Unnamed') + '</span>' +
-          '<button class="btn btn-danger" data-del="' + idx + '">Delete</button>' +
+          '<span class="item-title" data-idx="' + idx + '">' + esc(it.label || '${unnamed}') + '</span>' +
+          '<button class="btn btn-danger" data-del="' + idx + '">${tl('Delete')}</button>' +
         '</div>' +
-        '<div class="field"><label>Menu Name (label)</label><input type="text" data-field="label" data-idx="' + idx + '" value="' + esc(it.label) + '"></div>' +
-        '<div class="field"><label>Shell Command (command)</label><input type="text" data-field="command" data-idx="' + idx + '" value="' + esc(it.command) + '"><div class="placeholder">e.g. npm run build</div></div>' +
-        '<div class="field"><label>Description (optional)</label><input type="text" data-field="description" data-idx="' + idx + '" value="' + esc(it.description || '') + '"></div>' +
-        '<div class="field"><label>Working Directory (optional cwd)</label><input type="text" data-field="cwd" data-idx="' + idx + '" value="' + esc(it.cwd || '') + '"><div class="placeholder">Leave empty to use the workspace root</div></div>';
+        '<div class="field"><label>${tl('Menu Name (label)')}</label><input type="text" data-field="label" data-idx="' + idx + '" value="' + esc(it.label) + '"></div>' +
+        '<div class="field"><label>${tl('Shell Command (command)')}</label><input type="text" data-field="command" data-idx="' + idx + '" value="' + esc(it.command) + '"><div class="placeholder">${tl('e.g. npm run build')}</div></div>' +
+        '<div class="field"><label>${tl('Description (optional)')}</label><input type="text" data-field="description" data-idx="' + idx + '" value="' + esc(it.description || '') + '"></div>' +
+        '<div class="field"><label>${tl('Working Directory (optional cwd)')}</label><input type="text" data-field="cwd" data-idx="' + idx + '" value="' + esc(it.cwd || '') + '"><div class="placeholder">${tl('Leave empty to use the workspace root')}</div></div>';
       list.appendChild(div);
     });
   }
@@ -305,7 +314,7 @@ if (sel === 'Reload Window') {
   function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
   document.getElementById('addBtn').addEventListener('click', () => {
-    items.unshift({ label: 'New Item', command: '', description: '', cwd: '' });
+    items.unshift({ label: '${tl('New Item')}', command: '', description: '', cwd: '' });
     render();
     const first = document.querySelector('.item input[data-field="label"]');
     if (first) { first.focus(); first.select(); }
@@ -327,7 +336,7 @@ if (sel === 'Reload Window') {
       items[el.dataset.idx][el.dataset.field] = el.value;
       if (el.dataset.field === 'label') {
         const title = list.querySelector('.item-title[data-idx="'+el.dataset.idx+'"]');
-        if (title) title.textContent = el.value || 'Unnamed';
+        if (title) title.textContent = el.value || '${unnamed}';
       }
     }
   });
@@ -378,10 +387,10 @@ export function activate(context: vscode.ExtensionContext) {
     const itemsArr = getItems();
     if (itemsArr.length === 0) {
       vscode.window.showWarningMessage(
-        'Self Menu: no items configured yet.',
-        'Open Settings'
+        tl('Self Menu: no items configured yet.'),
+        tl('Open Settings')
       ).then(sel => {
-        if (sel === 'Open Settings') {
+        if (sel === tl('Open Settings')) {
           ConfigPanel.create(context);
         }
       });
@@ -394,13 +403,13 @@ export function activate(context: vscode.ExtensionContext) {
       label: item.label,
       description: item.description || item.command,
       detail: item.cwd
-        ? 'cwd: ' + resolvePlaceholders(item.cwd, workspaceFolder, resource)
+        ? tl('cwd: {0}', resolvePlaceholders(item.cwd, workspaceFolder, resource))
         : undefined,
       item: item
     }));
 
     vscode.window.showQuickPick(quickItem, {
-      placeHolder: 'Select a command to run, press ESC to cancel',
+      placeHolder: tl('Select a command to run, press ESC to cancel'),
       matchOnDescription: true,
       matchOnDetail: true
     }).then(selected => {
