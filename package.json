@@ -1,7 +1,7 @@
 {
   "name": "self-sub-menu",
   "displayName": "Self Menu",
-  "description": "%self-menu.description%",
+  "description": "Run custom shell commands from a configurable right-click submenu",
   "version": "0.0.1",
   "publisher": "uokyi",
   "engines": {

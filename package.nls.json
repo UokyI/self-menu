@@ -1,5 +1,4 @@
 {
-  "self-menu.description": "Run custom shell commands from a configurable right-click submenu",
   "self-menu.command.configure": "Self Menu: Configure Items",
   "self-menu.command.execute": "Self Menu (QuickPick)",
   "self-menu.submenu.label": "Self Menu",

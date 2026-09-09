@@ -1,5 +1,4 @@
 {
-  "self-menu.description": "在可配置的右键子菜单中运行自定义的 Shell 命令",
   "self-menu.command.configure": "Self Menu：配置菜单项",
   "self-menu.command.execute": "Self Menu（快速选择）",
   "self-menu.submenu.label": "Self Menu",
