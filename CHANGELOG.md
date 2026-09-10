@@ -2,6 +2,15 @@
 
 All notable changes to the "self-sub-menu" extension are documented in this file.
 
+## [0.0.4] - 2026-09-10
+
+### Changed
+
+- Refreshed the English and Simplified Chinese README files to better describe the
+  extension's actual workflow, configuration fields, placeholder variables, and runtime
+  requirements.
+- Bumped the extension version to 0.0.4 for the marketplace release.
+
 ## [0.0.3] - 2026-09-09
 
 ### Fixed
